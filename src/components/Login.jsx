@@ -1,73 +1,64 @@
 import { useState } from "react";
-import API from "../api";
+import { useNavigate } from "react-router-dom";
 
-const isValidEmail = (email) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-};
+export default function Login() {
+  const navigate = useNavigate();
 
-const isValidPassword = (password) => {
-  return /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/.test(password);
-};
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+    is_admin: "", 
+  });
 
+  const [error, setError] = useState("");
 
-function Login({ onLogin, onSwitchToRegister }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    if (!isValidEmail(username)) {
-        alert("Enter a valid email");
-        return;
-    }   
+    const res = await fetch("http://127.0.0.1:8000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form)
+    });
 
-    if (!isValidPassword(password)) {
-        alert("Invalid password format");
-        return;
-    }  
+    const data = await res.json();
+    localStorage.setItem("user", JSON.stringify(data));
 
-    try {
-      const res = await API.post("/login", {
-        username,
-        password,
-      });
+    if (!res.ok) {
+      setError(data.detail);
+      return;
+    }
 
-      localStorage.setItem("user", res.data.username);
-      onLogin(res.data.role);
-    } catch {
-      alert("Invalid credentials");
+    // guardar usuario
+    localStorage.setItem("user", JSON.stringify(data));
+
+    // 🔥 DECISIÓN IMPORTANTE
+    if (data.is_admin) {
+      navigate("/users");   // admin
+    } else {
+      navigate("/transactions"); // usuario normal
     }
   };
 
   return (
-    <div className="container">
+    <div>
       <h2>Login</h2>
 
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Usuario"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
+        <input name="username" onChange={handleChange} placeholder="username" />
+        <input name="password" type="password" onChange={handleChange} placeholder="password" />
         <button type="submit">Login</button>
       </form>
 
-      <p>
-        Don’t have an account?{" "}
-        <button onClick={onSwitchToRegister}>Sign Up</button>
-      </p>
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
-
-export default Login;

@@ -1,44 +1,18 @@
-import { useState, useEffect } from "react";
-import Login from "./components/Login";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Register from "./components/Register";
+import Login from "./components/Login";
 import Transactions from "./components/Transactions";
-import Admin from "./components/Admin";
+import Users from "./components/Users";
 
-function App() {
-  const [role, setRole] = useState(null);
-  const [page, setPage] = useState("login"); // login or register
-
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-
-    if (user === "admin@example.com") setRole("admin");
-    else if (user) setRole("user");
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setRole(null);
-    setPage("login");
-  };
-
-  if (!role) {
-    if (page === "register") {
-      return <Register onSwitchToLogin={() => setPage("login")} />;
-    }
-
-    return (
-      <Login
-        onLogin={setRole}
-        onSwitchToRegister={() => setPage("register")}
-      />
-    );
-  }
-
-  if (role === "admin") {
-    return <Admin onLogout={handleLogout} />;
-  }
-
-  return <Transactions onLogout={handleLogout} />;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login/>} />
+        <Route path="/register" element={<Register/>} />
+        <Route path="/transactions" element={<Transactions/>} />
+        <Route path="/users" element={<Users/>} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App;
