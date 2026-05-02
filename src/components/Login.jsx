@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -7,7 +8,6 @@ export default function Login() {
   const [form, setForm] = useState({
     username: "",
     password: "",
-    is_admin: "", 
   });
 
   const [error, setError] = useState("");
@@ -40,12 +40,11 @@ export default function Login() {
     // guardar usuario
     localStorage.setItem("user", JSON.stringify(data));
 
-    // 🔥 DECISIÓN IMPORTANTE
     if (data.is_admin) {
-      navigate("/users");   // admin
-    } else {
-      navigate("/transactions"); // usuario normal
-    }
+        navigate("/users");
+      } else {
+        navigate("/transactions");
+      }
   };
 
   return (
@@ -57,6 +56,10 @@ export default function Login() {
         <input name="password" type="password" onChange={handleChange} placeholder="password" />
         <button type="submit">Login</button>
       </form>
+
+      <p>
+        ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+      </p>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>

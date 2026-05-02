@@ -74,6 +74,9 @@ export default function Register() {
         return;
       }
 
+      localStorage.setItem("user", JSON.stringify(data));
+      navigate("/transactions");
+
       setSuccess("Usuario registrado correctamente");
 
       // limpiar formulario
