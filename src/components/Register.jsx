@@ -32,7 +32,6 @@ export default function Register() {
     setError("");
     setSuccess("");
 
-    // 🔥 VALIDACIONES FRONT
     if (!form.username || !form.email || !form.password || !form.birth_date) {
       setError("Todos los campos son obligatorios");
       return;
@@ -87,7 +86,6 @@ export default function Register() {
         birth_date: ""
       });
 
-      // 🚀 REDIRECCIÓN A TRANSACTIONS
       setTimeout(() => {
         navigate("/transactions");
       }, 800);

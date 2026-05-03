@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 export default function Transactions() {
+  
+  const { userId } = useParams();
   const currentUser = JSON.parse(localStorage.getItem("user"));
+  const targetUserId = userId || currentUser.id;
+  const isAdminView = !!userId;
 
   const [transactions, setTransactions] = useState([]);
   const [form, setForm] = useState({
@@ -14,20 +19,18 @@ export default function Transactions() {
 
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState("");
-
-  // ======================
-  // 🔄 GET TRANSACTIONS
-  // ======================
+  const [filterDate, setFilterDate] = useState("");
+  
+  // GET TRANSACTIONS
   const fetchTransactions = async () => {
     try {
       const res = await fetch("http://127.0.0.1:8000/transactions", {
         headers: {
-          "user-id": String(currentUser.id)
+          "user-id": String(targetUserId)
         }
       });
 
       const data = await res.json();
-      console.log("DATA:", data);
 
       setTransactions(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -39,9 +42,7 @@ export default function Transactions() {
     fetchTransactions();
   }, []);
 
-  // ======================
-  // ➕ CREATE / UPDATE
-  // ======================
+  // CREATE / UPDATE
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -57,7 +58,7 @@ export default function Transactions() {
         method: method,
         headers: {
           "Content-Type": "application/json",
-          "user-id": String(currentUser.id)
+          "user-id": String(targetUserId)
         },
         body: JSON.stringify(form)
       });
@@ -88,9 +89,7 @@ export default function Transactions() {
     }
   };
 
-  // ======================
-  // ✏️ EDIT
-  // ======================
+  // EDIT
   const handleEdit = (t) => {
     setForm({
       description: t.description,
@@ -103,15 +102,13 @@ export default function Transactions() {
     setEditingId(t.id);
   };
 
-  // ======================
-  // ❌ DELETE
-  // ======================
+  // DELETE
   const handleDelete = async (id) => {
     try {
       await fetch(`http://127.0.0.1:8000/transactions/${id}`, {
         method: "DELETE",
         headers: {
-          "user-id": String(currentUser.id)
+          "user-id": String(targetUserId)
         }
       });
 
@@ -121,17 +118,51 @@ export default function Transactions() {
     }
   };
 
-  // ======================
+  const filteredTransactions = transactions.filter((t) => {
+    if (!filterDate) return true;
+
+    const txDate = new Date(t.date);
+    const filter = new Date(filterDate);
+
+    return (
+      txDate.getMonth() === filter.getMonth() &&
+      txDate.getFullYear() === filter.getFullYear()
+    );  
+  });
+
+  const ingresos = filteredTransactions.filter(t => t.amount > 0);
+  const gastos = filteredTransactions.filter(t => t.amount < 0);
+
+  const getBalance = () => {
+  let total = 0;
+
+  filteredTransactions.forEach((t) => {
+    total += Number(t.amount);
+  });
+
+  return total.toFixed(2);
+};
   // UI
-  // ======================
   return (
     <div>
       <h2>Transactions</h2>
 
+      <h2>💸 Transactions</h2>
+
+      <h3>
+        Balance: 
+        <span style={{ color: getBalance() >= 0 ? "lightgreen" : "red" }}>
+          {getBalance()} €
+        </span>
+      </h3>
+
       {/* ======================
-          🧾 FORMULARIO
+          FORMULARIO
       ====================== */}
-      <form onSubmit={handleSubmit}>
+      {!isAdminView && (
+        <div>
+        {/* FORMULARIO */}
+        <form onSubmit={handleSubmit}>
         <input
           placeholder="Descripción"
           value={form.description}
@@ -167,7 +198,8 @@ export default function Transactions() {
           <option value="EUR">EUR</option>
           <option value="USD">USD</option>
         </select>
-
+        
+        {/* 
         <label>
           <input
             type="checkbox"
@@ -178,33 +210,72 @@ export default function Transactions() {
           />
           Recurrente
         </label>
+          */}
+
 
         <button type="submit">
           {editingId ? "Actualizar" : "Crear"}
         </button>
       </form>
-
-      {message && <p>{message}</p>}
-
-      {/* ======================
-          📋 LISTA
-      ====================== */}
-      <h3>Lista de transacciones</h3>
-
-      {transactions.length === 0 ? (
-        <p>No hay transacciones</p>
-      ) : (
-        transactions.map((t) => (
-          <div key={t.id} style={{ border: "1px solid gray", margin: 10, padding: 10 }}>
-            <p><b>{t.description}</b></p>
-            <p>{t.amount} {t.currency}</p>
-            <p>{t.date}</p>
-
-            <button onClick={() => handleEdit(t)}>Editar</button>
-            <button onClick={() => handleDelete(t.id)}>Eliminar</button>
-          </div>
-        ))
+        </div>
       )}
+      
+    
+      {message && <p>{message}</p>}
+      
+      <h3>Filtrar por mes</h3>
+
+      <input
+        type="month"
+        value={filterDate}
+        onChange={(e) => setFilterDate(e.target.value)}
+      />  
+      {/* ======================
+          LISTA
+      ====================== */}
+      <h3>Ingresos</h3>
+
+    {ingresos.length === 0 ? (
+      <p>No hay ingresos</p>
+    ) : (
+      ingresos.map((t) => (
+        <div key={t.id} style={{ border: "1px solid green", margin: 5, padding: 5 }}>
+          <p><b>{t.description}</b></p>
+          <p style={{ color: "green" }}>
+            +{t.amount} {t.currency}
+          </p>
+          <p>{t.date}</p>
+          {!isAdminView && (
+             <button onClick={() => handleEdit(t)}>Editar</button>
+          )}
+          {!isAdminView && (
+            <button onClick={() => handleDelete(t.id)}>Eliminar</button>
+          )}
+        </div>
+      ))
+    )}
+
+      <h3>Gastos</h3>
+
+    {gastos.length === 0 ? (
+      <p>No hay gastos</p>
+    ) : (
+      gastos.map((t) => (
+        <div key={t.id} style={{ border: "1px solid red", margin: 5, padding: 5 }}>
+          <p><b>{t.description}</b></p>
+          <p style={{ color: "red" }}>
+            {t.amount} {t.currency}
+          </p>
+          <p>{t.date}</p>
+          {!isAdminView && (
+            <button onClick={() => handleEdit(t)}>Editar</button>
+          )}
+          {!isAdminView && (
+            <button onClick={() => handleDelete(t.id)}>Eliminar</button>
+          )}
+        </div>
+      ))
+    )}
     </div>
   );
 }

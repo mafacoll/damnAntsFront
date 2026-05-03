@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import ConfirmModal from "./ConfirmModal";
+import { useNavigate } from "react-router-dom";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [editingUser, setEditingUser] = useState(null);
   const [form, setForm] = useState({});
   const [userToDelete, setUserToDelete] = useState(null);
+  const navigate = useNavigate();
 
   const currentUser = JSON.parse(localStorage.getItem("user"));
 
@@ -23,7 +25,7 @@ export default function Users() {
     fetchUsers();
   }, []);
 
-  // 🗑 DELETE
+  //  DELETE
   const deleteUser = async (id) => {
 
     const res = await fetch(`http://127.0.0.1:8000/users/${id}`, {
@@ -34,18 +36,17 @@ export default function Users() {
     });
 
     const data = await res.json();
-    console.log("DELETE RESPONSE:", res.status, data);
 
     fetchUsers();
   };
 
-  // ✏️ START EDIT
+  // START EDIT
   const startEdit = (user) => {
     setEditingUser(user.id);
     setForm(user);
   };
 
-  // ✏️ SAVE EDIT
+  //  SAVE EDIT
   const saveEdit = async () => {
     await fetch(`http://127.0.0.1:8000/users/${editingUser}`, {
       method: "PUT",
@@ -65,7 +66,18 @@ export default function Users() {
       <h2>Users</h2>
 
       {users.map(user => (
-        <div key={user.id} style={{ border: "1px solid #ccc", margin: 10, padding: 10 }}>
+          
+        
+        <div 
+          key={user.id}
+          onDoubleClick={() => navigate(`/transactions/${user.id}`)}
+          style={{
+          border: "1px solid #ccc",
+          margin: 10,
+          padding: 10,
+          cursor: "pointer"
+          }}
+        >
 
           {editingUser === user.id ? (
             <>

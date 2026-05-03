@@ -12,6 +12,7 @@ export default function App() {
         <Route path="/register" element={<Register/>} />
         <Route path="/transactions" element={<Transactions/>} />
         <Route path="/users" element={<Users/>} />
+        <Route path="/transactions/:userId" element={<Transactions />} />
       </Routes>
     </BrowserRouter>
   );
