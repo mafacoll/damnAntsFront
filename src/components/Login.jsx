@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import "../styles.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -48,20 +49,37 @@ export default function Login() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h2>Login</h2>
 
-      <form onSubmit={handleSubmit}>
-        <input name="username" onChange={handleChange} placeholder="username" />
-        <input name="password" type="password" onChange={handleChange} placeholder="password" />
-        <button type="submit">Login</button>
-      </form>
+        <form onSubmit={handleSubmit}>
+          <input
+            className="auth-input"
+            name="username"
+            onChange={handleChange}
+            placeholder="Usuario"
+          />
 
-      <p>
-        ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
-      </p>
+          <input
+            className="auth-input"
+            name="password"
+            type="password"
+            onChange={handleChange}
+            placeholder="Contraseña"
+          />
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+          <button className="auth-button" type="submit">
+            Login
+          </button>
+        </form>
+
+        <p className="auth-link">
+          ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+        </p>
+
+        {error && <p className="auth-error">{error}</p>}
+      </div>
     </div>
   );
 }

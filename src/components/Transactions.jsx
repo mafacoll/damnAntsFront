@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import "../styles.css";
 
 export default function Transactions() {
   
@@ -144,138 +145,118 @@ export default function Transactions() {
 };
   // UI
   return (
-    <div>
-      <h2>Transactions</h2>
+    <div className="auth-container">
+      <div className="auth-card" style={{ width: "650px" }}>
 
-      <h2>💸 Transactions</h2>
+        <h2>Transacciones</h2>
 
-      <h3>
-        Balance: 
-        <span style={{ color: getBalance() >= 0 ? "lightgreen" : "red" }}>
-          {getBalance()} €
-        </span>
-      </h3>
+        {/* BALANCE */}
+        <h3 style={{ marginBottom: "15px" }}>
+          Balance:{" "}
+          <span style={{ color: getBalance() >= 0 ? "green" : "red" }}>
+            {getBalance()} €
+          </span>
+        </h3>
 
-      {/* ======================
-          FORMULARIO
-      ====================== */}
-      {!isAdminView && (
-        <div>
-        {/* FORMULARIO */}
-        <form onSubmit={handleSubmit}>
+        {/* FORM */}
+        {!isAdminView && (
+          <form onSubmit={handleSubmit}>
+
+            <input
+              className="auth-input"
+              placeholder="Descripción"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+
+            <input
+              className="auth-input"
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm({ ...form, date: e.target.value })}
+            />
+
+            <input
+              className="auth-input"
+              type="number"
+              step="0.01"
+              placeholder="Cantidad"
+              value={form.amount}
+              onChange={(e) => setForm({ ...form, amount: e.target.value })}
+            />
+
+            <select
+              className="auth-input"
+              value={form.currency}
+              onChange={(e) => setForm({ ...form, currency: e.target.value })}
+            >
+              <option value="EUR">EUR</option>
+              <option value="USD">USD</option>
+            </select>
+
+            <button className="auth-button" type="submit">
+              {editingId ? "Actualizar" : "Crear"}
+            </button>
+          </form>
+        )}
+
+        {message && <p>{message}</p>}
+
+        {/* FILTER */}
+        <h3>Filtrar por mes</h3>
+
         <input
-          placeholder="Descripción"
-          value={form.description}
-          onChange={(e) =>
-            setForm({ ...form, description: e.target.value })
-          }
+          className="auth-input"
+          type="month"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
         />
 
-        <input
-          type="date"
-          value={form.date}
-          onChange={(e) =>
-            setForm({ ...form, date: e.target.value })
-          }
-        />
+        {/* INGRESOS */}
+        <h3 style={{ color: "green" }}>Ingresos</h3>
 
-        <input
-          type="number"
-          step="0.01"
-          placeholder="Cantidad"
-          value={form.amount}
-          onChange={(e) =>
-            setForm({ ...form, amount: e.target.value })
-          }
-        />
+        {ingresos.length === 0 ? (
+          <p>No hay ingresos</p>
+        ) : (
+          ingresos.map(t => (
+            <div key={t.id} className="tx-card tx-income">
+              <p><b>{t.description}</b></p>
+              <p style={{ color: "green" }}>+{t.amount} {t.currency}</p>
+              <p>{t.date}</p>
 
-        <select
-          value={form.currency}
-          onChange={(e) =>
-            setForm({ ...form, currency: e.target.value })
-          }
-        >
-          <option value="EUR">EUR</option>
-          <option value="USD">USD</option>
-        </select>
-        
-        {/* 
-        <label>
-          <input
-            type="checkbox"
-            checked={form.is_recurring}
-            onChange={(e) =>
-              setForm({ ...form, is_recurring: e.target.checked })
-            }
-          />
-          Recurrente
-        </label>
-          */}
+              {!isAdminView && (
+                <>
+                  <button className="button-small button-edit" onClick={() => handleEdit(t)}>Editar</button>
+                  <button className="button-small button-delete" onClick={() => handleDelete(t.id)}>Eliminar</button>
+                </>
+              )}
+            </div>
+          ))
+        )}
 
+        {/* GASTOS */}
+        <h3 style={{ color: "red", marginTop: "20px" }}>Gastos</h3>
 
-        <button type="submit">
-          {editingId ? "Actualizar" : "Crear"}
-        </button>
-      </form>
-        </div>
-      )}
-      
-    
-      {message && <p>{message}</p>}
-      
-      <h3>Filtrar por mes</h3>
+        {gastos.length === 0 ? (
+          <p>No hay gastos</p>
+        ) : (
+          gastos.map(t => (
+            <div key={t.id} className="tx-card tx-expense">
+              <p><b>{t.description}</b></p>
+              <p style={{ color: "red" }}>{t.amount} {t.currency}</p>
+              <p>{t.date}</p>
 
-      <input
-        type="month"
-        value={filterDate}
-        onChange={(e) => setFilterDate(e.target.value)}
-      />  
-      {/* ======================
-          LISTA
-      ====================== */}
-      <h3>Ingresos</h3>
+              {!isAdminView && (
+                <>
+                  <button className="button-small button-edit" onClick={() => handleEdit(t)}>Editar</button>
+                  <button className="button-small button-delete" onClick={() => handleDelete(t.id)}>Eliminar</button>
+                </>
+              )}
+            </div>
+          ))
+        )}
 
-    {ingresos.length === 0 ? (
-      <p>No hay ingresos</p>
-    ) : (
-      ingresos.map((t) => (
-        <div key={t.id} style={{ border: "1px solid green", margin: 5, padding: 5 }}>
-          <p><b>{t.description}</b></p>
-          <p style={{ color: "green" }}>
-            +{t.amount} {t.currency}
-          </p>
-          <p>{t.date}</p>
-          {!isAdminView && (
-             <button onClick={() => handleEdit(t)}>Editar</button>
-          )}
-          {!isAdminView && (
-            <button onClick={() => handleDelete(t.id)}>Eliminar</button>
-          )}
-        </div>
-      ))
-    )}
-
-      <h3>Gastos</h3>
-
-    {gastos.length === 0 ? (
-      <p>No hay gastos</p>
-    ) : (
-      gastos.map((t) => (
-        <div key={t.id} style={{ border: "1px solid red", margin: 5, padding: 5 }}>
-          <p><b>{t.description}</b></p>
-          <p style={{ color: "red" }}>
-            {t.amount} {t.currency}
-          </p>
-          <p>{t.date}</p>
-          {!isAdminView && (
-            <button onClick={() => handleEdit(t)}>Editar</button>
-          )}
-          {!isAdminView && (
-            <button onClick={() => handleDelete(t.id)}>Eliminar</button>
-          )}
-        </div>
-      ))
-    )}
+      </div>
     </div>
   );
 }

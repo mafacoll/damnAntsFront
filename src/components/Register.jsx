@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles.css";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -86,6 +87,7 @@ export default function Register() {
         birth_date: ""
       });
 
+      // REDIRECCIÓN A TRANSACTIONS
       setTimeout(() => {
         navigate("/transactions");
       }, 800);
@@ -95,7 +97,7 @@ export default function Register() {
     }
   };
 
-  return (
+   return (
     <div>
       <h2>Register</h2>
 

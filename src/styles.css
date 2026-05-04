@@ -1,0 +1,200 @@
+
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #1e3a8a;
+  color: #111;
+}
+
+
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 0;
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+}
+
+.auth-card {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 360px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+/* TITULOS */
+.auth-card h2 {
+  color: #1f2937;
+  margin-bottom: 20px;
+}
+
+.auth-input,
+.auth-button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-input {
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #111;
+}
+
+select.auth-input {
+  appearance: none;
+  background: white;
+}
+
+.auth-button {
+  padding: 10px;
+  margin-top: 8px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.auth-button:hover {
+  background: #1e40af;
+}
+
+/* LINKS Y MENSAJES */
+.auth-link {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.auth-error {
+  color: red;
+  margin-top: 10px;
+}
+
+/* ======================
+   TRANSACTIONS UI
+====================== */
+
+.tx-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 10px 0;
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tx-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* INGRESOS */
+.tx-income {
+  border-left: 5px solid #22c55e;
+  background: #f0fdf4;
+}
+
+/* GASTOS */
+.tx-expense {
+  border-left: 5px solid #ef4444;
+  background: #fef2f2;
+}
+
+/* ======================
+   BOTONES PEQUEÑOS
+====================== */
+
+.button-small {
+  padding: 5px 10px;
+  margin-right: 5px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.button-edit {
+  background: #2563eb;
+  color: white;
+}
+
+.button-delete {
+  background: #ef4444;
+  color: white;
+}
+
+/* ======================
+   FORM LAYOUT CONSISTENCY
+====================== */
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+/* ======================
+   REGISTER EXTRA POLISH
+====================== */
+
+/* Ajuste del card para forms más largos */
+.auth-card {
+  width: 380px; /* un poco más cómodo para register */
+}
+
+/* Espaciado extra en register */
+.auth-card form {
+  margin-top: 10px;
+}
+
+/* Mejor separación de inputs en register */
+.auth-card input {
+  margin-bottom: 6px;
+}
+
+/* Fecha input mejor alineado */
+.auth-card input[type="date"] {
+  padding-right: 8px;
+}
+
+/* Mensaje éxito */
+.auth-success {
+  color: #16a34a;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Link hover (login/register cross nav) */
+.auth-link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+input[type="month"] {
+  appearance: auto;
+  -webkit-appearance: auto;
+}
+
+input[type="month"]::-webkit-calendar-picker-indicator {
+  opacity: 1;
+  display: block;
+  cursor: pointer;
+}

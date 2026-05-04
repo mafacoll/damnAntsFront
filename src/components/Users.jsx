@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import ConfirmModal from "./ConfirmModal";
 import { useNavigate } from "react-router-dom";
+import "../styles.css";
+
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -62,64 +64,86 @@ export default function Users() {
   };
 
   return (
-    <div>
-      <h2>Users</h2>
+    <div className="auth-container">
+      <div className="auth-card" style={{ width: "600px" }}>
 
-      {users.map(user => (
-          
-        
-        <div 
-          key={user.id}
-          onDoubleClick={() => navigate(`/transactions/${user.id}`)}
-          style={{
-          border: "1px solid #ccc",
-          margin: 10,
-          padding: 10,
-          cursor: "pointer"
-          }}
-        >
+        <h2>Users</h2>
 
-          {editingUser === user.id ? (
-            <>
-              <input
-                value={form.username || ""}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
-              />
+        {users.map(user => (
+          <div
+            key={user.id}
+            className="tx-card"
+            onDoubleClick={() => navigate(`/transactions/${user.id}`)}
+            style={{ cursor: "pointer" }}
+          >
 
-              <input
-                value={form.email || ""}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-              />
+            {editingUser === user.id ? (
+              <>
+                <input
+                  className="auth-input"
+                  value={form.username || ""}
+                  onChange={(e) =>
+                    setForm({ ...form, username: e.target.value })
+                  }
+                />
 
-              <button onClick={saveEdit}>Guardar</button>
-              <button onClick={() => setEditingUser(null)}>Cancelar</button>
-            </>
-          ) : (
-            <>
-              <p><b>{user.username}</b></p>
-              <p>{user.email}</p>
-              <p>{user.birth_date}</p>
-              <p>{user.is_admin ? "Admin" : "User"}</p>
+                <input
+                  className="auth-input"
+                  value={form.email || ""}
+                  onChange={(e) =>
+                    setForm({ ...form, email: e.target.value })
+                  }
+                />
 
-              <button onClick={() => startEdit(user)}>Editar</button>
-              <button onClick={() => setUserToDelete(user.id)}>Eliminar</button>
-              
-            </>
-          )}
+                <button className="auth-button" onClick={saveEdit}>
+                  Guardar
+                </button>
 
-        </div>
-      ))}
+                <button
+                  className="button-small button-delete"
+                  onClick={() => setEditingUser(null)}
+                >
+                  Cancelar
+                </button>
+              </>
+            ) : (
+              <>
+                <p><b>{user.username}</b></p>
+                <p>{user.email}</p>
+                <p>{user.birth_date}</p>
+                <p>{user.is_admin ? "Admin" : "User"}</p>
 
-      {userToDelete && (
-        <ConfirmModal
-          message="¿Seguro que quieres eliminar este usuario?"
-          onConfirm={async () => {
-           await deleteUser(userToDelete);
-            setUserToDelete(null);
-          }}
-          onCancel={() => setUserToDelete(null)}
-        />
-      )}  
+                <button
+                  className="button-small button-edit"
+                  onClick={() => startEdit(user)}
+                >
+                  Editar
+                </button>
+
+                <button
+                  className="button-small button-delete"
+                  onClick={() => setUserToDelete(user.id)}
+                >
+                  Eliminar
+                </button>
+              </>
+            )}
+
+          </div>
+        ))}
+
+        {userToDelete && (
+          <ConfirmModal
+            message="¿Seguro que quieres eliminar este usuario?"
+            onConfirm={async () => {
+              await deleteUser(userToDelete);
+              setUserToDelete(null);
+            }}
+            onCancel={() => setUserToDelete(null)}
+          />
+        )}
+
+      </div>
     </div>
   );
 }
